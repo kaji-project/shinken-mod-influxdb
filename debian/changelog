@@ -1,0 +1,5 @@
+shinken-module-mod-influxdb (0.4-1) UNRELEASED; urgency=medium
+
+  * New upstream version 0.4
+
+ -- Thibault Cohen <tcohen@tcohen-pc.mtl.sfl>  Wed, 30 Jul 2014 16:53:29 -0400
