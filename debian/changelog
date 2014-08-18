@@ -1,5 +1,7 @@
-shinken-mod-influxdb (0.5-1) UNRELEASED; urgency=medium
+shinken-mod-influxdb (0.5-1) unstable; urgency=medium
 
   * New upstream version 0.5
+  * Add custom config files
+  * Closes: #745458
 
- -- Thibault Cohen <tcohen@tcohen-pc.mtl.sfl>  Mon, 18 Aug 2014 16:19:48 -0400
+ -- Thibault Cohen <thibault.cohen@savoirfairelinux.com>  Mon, 18 Aug 2014 16:19:48 -0400
