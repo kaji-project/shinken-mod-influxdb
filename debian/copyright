@@ -8,11 +8,6 @@ Copyright: 2014 Alexandre Viau
 License: GNU-AGPL
 
 
-Files:debian/etc/modules/mod-influxdb.cfg
-Copyright: 2014 Alexandre Viau
-License: GNU-AGPL
-
-
 Files: debian/*
 Copyright: 2014 Thibault Cohen <titilambert@gmail.com>
            2014 Mathieu Parent <sathieu@debian.org>
