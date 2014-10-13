@@ -12,7 +12,7 @@ Homepage: http://shinken.io/package/mod-influxdb
 
 Package: shinken-mod-influxdb
 Architecture: any
-Depends: ${misc:Depends}, shinken-common
+Depends: ${misc:Depends}, shinken-common, python-influxdb
 Breaks: shinken (<< 2~), shinken-common (<< 2~), shinken-core (<< 2~)
 Description: Shinken mod-influxdb module
  Export host and service performance data and events to InfluxDB
