@@ -1,0 +1,13 @@
+Index: shinken-mod-influxdb/etc/modules/influxdb.cfg
+===================================================================
+--- shinken-mod-influxdb.orig/etc/modules/influxdb.cfg
++++ shinken-mod-influxdb/etc/modules/influxdb.cfg
+@@ -4,7 +4,7 @@
+ # InfluxDB is an open-source distributed time series database with no external
+ # dependencies. http://influxdb.com/
+ define module {
+-    module_name     mod-influxdb
++    module_name     influxdb
+     module_type     influxdb_perfdata
+     host            localhost
+     port            8086
