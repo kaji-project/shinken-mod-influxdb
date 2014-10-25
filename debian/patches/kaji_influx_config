@@ -1,0 +1,17 @@
+Index: shinken-mod-influxdb/etc/modules/influxdb.cfg
+===================================================================
+--- shinken-mod-influxdb.orig/etc/modules/influxdb.cfg
++++ shinken-mod-influxdb/etc/modules/influxdb.cfg
+@@ -8,9 +8,9 @@ define module {
+     module_type     influxdb_perfdata
+     host            localhost
+     port            8086
+-    user            root
+-    password        root
+-    database        database
++    user            kaji
++    password        kaji
++    database        shinken
+     #use_udp        1 ; default value is 0, 1 to use udp
+     udp_port        4444
+     #tick_limit     300 ; Default value 300
