@@ -34,8 +34,13 @@ backend. http://influxdb.com/
 from shinken.basemodule import BaseModule
 from shinken.log import logger
 from shinken.misc.perfdata import PerfDatas
-from shinken.misc.logevent import LogEvent
 from influxdb import InfluxDBClient
+
+# LogEvent is only available in shinken>2.0.3
+try:
+    from shinken.misc.logevent import LogEvent
+except ImportError:
+    from logevent import LogEvent
 
 properties = {
     'daemons': ['broker'],
