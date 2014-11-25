@@ -1,3 +1,9 @@
+shinken-mod-influxdb (0.8-1) unstable; urgency=medium
+
+  * New upstream version 0.8
+
+ -- Thibault Cohen <thibault.cohen@savoirfairelinux.com>  Tue, 25 Nov 2014 16:57:10 -0500
+
 shinken-mod-influxdb (0.7.1-1kaji0.2) unstable; urgency=medium
 
   * Kaji release

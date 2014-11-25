@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Shinken Debian packages maintainers <pkg-shinken-maint@lists.alioth.debian.org>
 Uploaders: Mathieu Parent <sathieu@debian.org>, Thibault Cohen <thibault.cohen@savoirfairelinux.com>
 Build-Depends: debhelper (>= 9), python
-Standards-Version: 3.9.6
+Standards-Version: 3.9.5
 XS-Python-Version: >= 2.5, << 3.0
 Vcs-Git: git://anonscm.debian.org/pkg-shinken/shinken-mod-influxdb.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-shinken/shinken-mod-influxdb.git;a=summary
@@ -12,7 +12,7 @@ Homepage: http://shinken.io/package/shinken-mod-influxdb
 
 Package: shinken-mod-influxdb
 Architecture: any
-Depends: ${misc:Depends}, shinken-common, python-influxdb
+Depends: ${misc:Depends}, shinken-common
 Breaks: shinken (<< 2~), shinken-common (<< 2~), shinken-core (<< 2~)
 Description: Shinken shinken-mod-influxdb module
  Export host and service performance data and events to InfluxDB
