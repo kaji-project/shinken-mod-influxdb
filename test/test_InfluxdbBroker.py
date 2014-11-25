@@ -1,22 +1,61 @@
-from module.module import InfluxdbBroker, get_instance
+
+from module.module import (
+    InfluxdbBroker,
+    get_instance,
+    encode_serie_name,
+    decode_serie_name,
+)
 from shinken.objects.module import Module
 from shinken.brok import Brok
-import unittest
+
+import unittest2 as unittest
+
+
+basic_dict_modconf = dict(
+    module_name='influxdbBroker',
+    module_type='influxdbBroker'
+)
+
+
+class TestSerieName(unittest.TestCase):
+
+    def test_bad_kw(self):
+        self.assertRaises(TypeError, encode_serie_name, unexpected_kw='bla')
+
+    def test_empty(self):
+        vals = []
+        encoded = encode_serie_name(*vals)
+        self.assertEqual('', encoded)
+        self.assertEqual(vals, decode_serie_name(encoded))
+
+    def test_simple(self):
+        vals = [ 'hostname', 'service' ]
+        encoded = encode_serie_name(*vals)
+        self.assertEqual('hostname>service', encoded)
+        self.assertEqual(vals, decode_serie_name(encoded))
+
+    def test_complex(self):
+        vals = [ 'host>name', '>service', '\\' ]
+        encoded = encode_serie_name(*vals)
+        self.assertEqual(r'host\>name>\>service>\\', encoded)
+        self.assertEqual(vals, decode_serie_name(encoded))
+
+    def test_with_front(self):
+        vals = [ 'host>name', '>service' ]
+        front = r'\> complex front >\>'
+        encoded = encode_serie_name(*vals, front=front)
+        self.assertEqual(r'\> complex front >\>>host\>name>\>service', encoded)
+        self.assertEqual(decode_serie_name(front) + vals, decode_serie_name(encoded))
 
 
 class TestInfluxdbBroker(unittest.TestCase):
 
     def setUp(self):
-        self.basic_modconf = Module(
-            {
-                'module_name': 'influxdbBroker',
-                'module_type': 'influxdbBroker',
-            }
-        )
+        self.basic_modconf = Module(basic_dict_modconf)
 
     def test_get_instance(self):
         result = get_instance(self.basic_modconf)
-        self.assertTrue(type(result) is InfluxdbBroker)
+        self.assertIsInstance(result, InfluxdbBroker)
 
     def test_get_unknown_check_result_perfdata_points(self):
         name = 'testname'
@@ -27,13 +66,13 @@ class TestInfluxdbBroker(unittest.TestCase):
 
         expected = [
             {'points': [[1403618279, 1009, 'MB', None, None, 0, 1982]],
-             'name': 'testname.ramused',
+             'name': 'testname>ramused',
              'columns': ['time', 'value', 'unit', 'warning', 'critical', 'min', 'max']},
             {'points': [[1403618279, 1550, 'GB', 2973, 3964, 0, 5810]],
-             'name': 'testname.memused',
+             'name': 'testname>memused',
              'columns': ['time', 'value', 'unit', 'warning', 'critical', 'min', 'max']},
             {'points': [[1403618279, 540, 'PT', None, None, 0, 3827]],
-             'name': 'testname.swapused',
+             'name': 'testname>swapused',
              'columns': ['time', 'value', 'unit', 'warning', 'critical', 'min', 'max']}
         ]
 
@@ -53,13 +92,13 @@ class TestInfluxdbBroker(unittest.TestCase):
 
         expected = [
             {'points': [[1403618279, 1009, 'MB', None, None, 0, 1982]],
-             'name': 'testname.ramused',
+             'name': 'testname>ramused',
              'columns': ['time', 'value', 'unit', 'warning', 'critical', 'min', 'max']},
             {'points': [[1403618279, 1550, 'GB', 2973, 3964, 0, 5810]],
-             'name': 'testname.memused',
+             'name': 'testname>memused',
              'columns': ['time', 'value', 'unit', 'warning', 'critical', 'min', 'max']},
             {'points': [[1403618279, 540, 'PT', None, None, 0, 3827]],
-             'name': 'testname.swapused',
+             'name': 'testname>swapused',
              'columns': ['time', 'value', 'unit', 'warning', 'critical', 'min', 'max']}
         ]
         result = InfluxdbBroker.get_check_result_perfdata_points(
@@ -84,7 +123,7 @@ class TestInfluxdbBroker(unittest.TestCase):
         result = InfluxdbBroker.get_state_update_points(data, name)
         expected = [
             {'points': [[1403618279, 'WARNING', 'HARD', 'BOB IS NOT HAPPY']],
-             'name': 'testname._events_.ALERT',
+             'name': 'testname>_events_>ALERT',
              'columns': ['time', 'state', 'state_type', 'output']}
         ]
         self.assertEqual(expected, result)
@@ -101,7 +140,7 @@ class TestInfluxdbBroker(unittest.TestCase):
         result = InfluxdbBroker.get_state_update_points(data, name)
         expected = [
             {'points': [[1403618279, 'WARNING', 'SOFT', 'BOB IS NOT HAPPY']],
-             'name': 'testname._events_.ALERT',
+             'name': 'testname>_events_>ALERT',
              'columns': ['time', 'state', 'state_type', 'output']}
         ]
         self.assertEqual(expected, result)
@@ -190,6 +229,13 @@ class TestInfluxdbBroker(unittest.TestCase):
         self.assertEqual(broker.ticks, 0)
         self.assertEqual(broker.buffer, [])
 
+
+class TestInfluxdbBrokerInstance(unittest.TestCase):
+
+    def setUp(self):
+        self.basic_modconf = Module(basic_dict_modconf)
+        self.influx_broker = InfluxdbBroker(self.basic_modconf)
+
     def test_manage_log_brok(self):
         data = {
             'log': '[1402515279] HOST NOTIFICATION: admin;localhost;CRITICAL;notify-service-by-email;Connection refused'
@@ -197,7 +243,7 @@ class TestInfluxdbBroker(unittest.TestCase):
         brok = Brok('log', data)
         brok.prepare()
 
-        broker = InfluxdbBroker(self.basic_modconf)
+        broker = self.influx_broker
         broker.manage_log_brok(brok)
 
         # make sure that this has generated only 1 point
@@ -207,7 +253,7 @@ class TestInfluxdbBroker(unittest.TestCase):
         # validate the point
         expected = {
             'points': [[None, 'CRITICAL', 'admin', 1402515279, 'notify-service-by-email', 'HOST']],
-            'name': 'localhost._events_.NOTIFICATION',
+            'name': 'localhost>_self_>_events_>NOTIFICATION',
             'columns': ['acknownledgement', 'state', 'contact', 'time', 'notification_method', 'notification_type']
         }
 
@@ -227,7 +273,7 @@ class TestInfluxdbBroker(unittest.TestCase):
         broker.buffer = []
         broker.manage_log_brok(brok)
         point = broker.buffer[0]
-        self.assertEqual(point['name'], 'localhost.check-ssh._events_.NOTIFICATION')
+        self.assertEqual(point['name'], 'localhost>check-ssh>_events_>NOTIFICATION')
 
     def test_log_brok_illegal_char(self):
         data = {
@@ -235,9 +281,52 @@ class TestInfluxdbBroker(unittest.TestCase):
         }
         brok = Brok('log', data)
         brok.prepare()
-        broker = InfluxdbBroker(self.basic_modconf)
+        broker = self.influx_broker
         broker.manage_log_brok(brok)
         point = broker.buffer[0]
-        self.assertEqual(point['name'], 'www_cibc_com.www_cibc_com._events_.ALERT')
+        self.assertEqual(point['name'], 'www.cibc.com>www.cibc.com>_events_>ALERT')
 
+    def test_manage_unknown_host_check_result_brok(self):
+        # Prepare the Brok
+        data = {
+            'time_stamp': 1234567890, 'return_code': '2',
+            'host_name': 'test_host_0', 'output': 'Bob is not happy',
+            'perf_data': 'rtt=9999'
+        }
+        brok = Brok('unknown_host_check_result', data)
+        brok.prepare()
 
+        # Send the brok
+        broker = self.influx_broker
+        broker.manage_unknown_host_check_result_brok(brok)
+
+        self.assertEqual(
+            broker.buffer[0],
+            {'points': [[1234567890, 9999, '', None, None, None, None]],
+             'name': 'test_host_0>rtt', 'columns':
+                ['time', 'value', 'unit', 'warning', 'critical', 'min', 'max']
+             }
+        )
+
+    def test_manage_unknown_service_check_result_brok(self):
+        # Prepare the Brok
+        data = {
+            'host_name': 'test_host_0', 'time_stamp': 1234567890,
+            'service_description': 'test_ok_0', 'return_code': '1',
+            'output': 'Bobby is not happy',
+            'perf_data': 'rtt=9999;5;10;0;10000'
+        }
+        brok = Brok('unknown_service_check_result', data)
+        brok.prepare()
+
+        # Send the brok
+        broker = self.influx_broker
+        broker.manage_unknown_service_check_result_brok(brok)
+
+        self.assertEqual(
+            broker.buffer[0],
+            {'points': [[1234567890, 9999, '', 5, 10, 0, 10000]], 'name':
+                'test_host_0>test_ok_0>rtt', 'columns':
+                ['time', 'value', 'unit', 'warning', 'critical', 'min', 'max']
+             }
+        )
