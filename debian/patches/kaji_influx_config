@@ -8,8 +8,8 @@ Index: shinken-mod-influxdb/etc/modules/influxdb.cfg
      port            8086
 -    user            root
 -    password        root
-+    user            kaji
-+    password        kaji
++    user            shinken
++    password        shinken
      database        shinken
      #use_udp        1 ; default value is 0, 1 to use udp
      udp_port        4444
