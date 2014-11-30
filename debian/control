@@ -11,7 +11,7 @@ Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-shinken/shinken-mod-influxd
 Homepage: http://shinken.io/package/shinken-mod-influxdb
 
 Package: shinken-mod-influxdb
-Architecture: any
+Architecture: all
 Depends: ${misc:Depends}, shinken-common, python-influxdb
 Breaks: shinken (<< 2~), shinken-common (<< 2~), shinken-core (<< 2~)
 Description: Shinken shinken-mod-influxdb module
