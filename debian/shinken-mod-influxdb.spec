@@ -1,5 +1,5 @@
 Name:		shinken-mod-influxdb
-Version:	1.4.1
+Version:	0.8
 Release:	2kaji0.2
 Summary:	Shinken Module InfluxDB for Broker
 
@@ -11,7 +11,7 @@ Source0:	%{name}_%{version}.orig.tar.gz
 BuildArch:  noarch
 
 Requires:	shinken-common >= 2.0
-Requires:   python-influxdb
+Requires:   influxdb-python
 
 %description
 Shinken InfluxDB module for Broker
@@ -40,8 +40,7 @@ install -pm0755 etc/modules/* %{buildroot}/etc/shinken/modules
 /usr/share/pyshared/shinken/modules/mod-influxdb
 %config(noreplace) %{_sysconfdir}/shinken/modules/
 
-%docdir
-%{_docdir}/%{name}
+%doc %{_docdir}/%{name}/*
 
 
 %changelog
