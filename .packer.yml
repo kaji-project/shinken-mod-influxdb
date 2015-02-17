@@ -1,4 +1,10 @@
-distro:
-  - centos_6
-spec: debian/shinken-mod-influxdb.spec
-debian: debian
+centos_6:
+  spec: debian/shinken-mod-influxdb.spec
+centos_7:
+  spec: debian/shinken-mod-influxdb.spec
+debian_8:
+  debian: debian
+ubuntu_12.04:
+  debian: debian
+ubuntu_14.04:
+  debian: debian
